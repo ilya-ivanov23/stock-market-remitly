@@ -3,14 +3,11 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: remitly
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: stock_market
+    env_file: .env
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U remitly -d stock_market"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -18,10 +15,11 @@ services:
   app1:
     build: .
     restart: always # To automatically restart after /chaos
+    env_file: .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock_market
-      - SPRING_DATASOURCE_USERNAME=remitly
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       db:
@@ -30,10 +28,11 @@ services:
   app2:
     build: .
     restart: always
+    env_file: .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock_market
-      - SPRING_DATASOURCE_USERNAME=remitly
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       db:
