@@ -14,6 +14,8 @@ chmod +x start.sh
 ./start.sh 8080
 ```
 
+> **Note on Configuration:** For security best practices, database credentials are not hardcoded. The application uses a `.env` file. The `start.sh` script automatically detects if `.env` is missing and copies the provided `.env.example` to ensure a seamless "one-click" startup experience.
+
 The application will be available at `http://localhost:<YOUR_PORT>` (e.g., `http://localhost:8080`).
 
 ## Architecture & Engineering Decisions
