@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    # Локальный URL для запуска из IDE (в докере он переопределится через environment)
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/stock_market}
+    username: ${SPRING_DATASOURCE_USERNAME:remitly}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: false

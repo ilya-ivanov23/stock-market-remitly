@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: remitly
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: stock_market
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U remitly -d stock_market"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app1:
+    build: .
+    restart: always # Чтобы после /chaos он сам поднимался
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock_market
+      - SPRING_DATASOURCE_USERNAME=remitly
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app2:
+    build: .
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock_market
+      - SPRING_DATASOURCE_USERNAME=remitly
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${APP_PORT}:80" # Динамический порт прокидывается из скрипта!
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app1
+      - app2
