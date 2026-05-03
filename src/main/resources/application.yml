@@ -1,6 +1,6 @@
 spring:
   datasource:
-    # Локальный URL для запуска из IDE (в докере он переопределится через environment)
+    # Local URL for IDE run (in docker it will be overridden via environment)
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/stock_market}
     username: ${SPRING_DATASOURCE_USERNAME:remitly}
     password: ${SPRING_DATASOURCE_PASSWORD:password}

@@ -7,10 +7,10 @@ fi
 export APP_PORT=$1
 echo "Starting application on localhost:$APP_PORT..."
 
-# Собираем JARник
+# Build JAR
 ./mvnw clean package -DskipTests
 
-# Запускаем контейнеры
+# Run containers
 docker-compose up -d --build
 
 echo "Application is highly available and ready at http://localhost:$APP_PORT"
