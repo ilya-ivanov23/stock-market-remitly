@@ -2,7 +2,7 @@
 
 A highly available, resilient, and simplified stock market simulation built with Java, Spring Boot, PostgreSQL, Docker, and Nginx.
 
-## 🚀 How to Run
+## How to Run
 
 The solution can be started with a single command. It will build the application, provision the PostgreSQL database, start **two** identical application instances, and configure an Nginx load balancer in front of them.
 
@@ -16,7 +16,7 @@ chmod +x start.sh
 
 The application will be available at `http://localhost:<YOUR_PORT>` (e.g., `http://localhost:8080`).
 
-## 🏗 Architecture & Engineering Decisions
+## Architecture & Engineering Decisions
 
 To meet the non-functional requirements (NFRs) while adhering to the KISS and YAGNI principles, the following architecture was implemented:
 
@@ -37,7 +37,7 @@ To meet the non-functional requirements (NFRs) while adhering to the KISS and YA
    - PostgreSQL (ACID compliant database for transactional safety).
    - Docker & Docker Compose (Containerization for cross-platform support: macOS, Linux, Windows, ARM64/x64).
 
-## 🔮 Future Improvements (Production Readiness)
+## Future Improvements (Production Readiness)
 
 While this architecture perfectly suits the "simplified scenario" constraints, a high-load production environment would benefit from:
 
@@ -47,11 +47,12 @@ While this architecture perfectly suits the "simplified scenario" constraints, a
 - **Order Matching Engine**: Implementing a real Order Book (Bids/Asks) using an in-memory grid rather than simple CRUD updates.
 - **Comprehensive Test Suite**: Due to time constraints of the simplified task, only basic functionality is covered. A production system must include Testcontainers-based integration tests checking for concurrency (Race Conditions) and comprehensive unit tests for all edge cases.
 
-## 🧪 Testing the Application (cURL)
+## Testing the Application (cURL)
 
 You can verify the entire flow and high availability using the following sequence of commands.
 
 **1. Initialize the bank state**
+
 ```bash
 curl -X POST http://localhost:8080/stocks \
 -H "Content-Type: application/json" \
@@ -59,6 +60,7 @@ curl -X POST http://localhost:8080/stocks \
 ```
 
 **2. Buy a stock (automatically creates wallet)**
+
 ```bash
 curl -X POST http://localhost:8080/wallets/wallet123/stocks/AAPL \
 -H "Content-Type: application/json" \
@@ -66,19 +68,22 @@ curl -X POST http://localhost:8080/wallets/wallet123/stocks/AAPL \
 ```
 
 **3. Check wallet state**
+
 ```bash
 curl http://localhost:8080/wallets/wallet123
 # Expected Output: {"id":"wallet123","stocks":[{"name":"AAPL","quantity":1}]}
 ```
 
 **4. Trigger Chaos (Kill an instance)**
+
 ```bash
 curl -X POST http://localhost:8080/chaos
-# Note: This will return a "502 Bad Gateway" because the instance is forcefully killed mid-flight. 
+# Note: This will return a "502 Bad Gateway" because the instance is forcefully killed mid-flight.
 # However, the load balancer (Nginx) will immediately route subsequent traffic to the surviving instance.
 ```
 
 **5. Verify High Availability (Buy another stock)**
+
 ```bash
 curl -X POST http://localhost:8080/wallets/wallet123/stocks/GOOG \
 -H "Content-Type: application/json" \
@@ -87,6 +92,7 @@ curl -X POST http://localhost:8080/wallets/wallet123/stocks/GOOG \
 ```
 
 **6. Verify Audit Log**
+
 ```bash
 curl http://localhost:8080/log
 # Expected Output: {"log":[{"type":"buy","wallet_id":"wallet123","stock_name":"AAPL"},{"type":"buy","wallet_id":"wallet123","stock_name":"GOOG"}]}
